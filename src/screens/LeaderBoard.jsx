@@ -63,8 +63,8 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
 
   return (
     <div className="bg-gray-950 min-h-screen flex flex-col" style={{ userSelect: 'none' }}>
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 bg-gray-900 border-b border-gray-700 shrink-0 gap-2">
+      {/* Header — safe-area-left/right for notch, safe-area-top for status bar in standalone */}
+      <div className="flex items-center justify-between px-3 py-2 bg-gray-900 border-b border-gray-700 shrink-0 gap-2 safe-top safe-left safe-right">
         <span className="text-white font-black text-base sm:text-xl tracking-tight uppercase shrink-0">
           Band Cue Board
         </span>
@@ -116,8 +116,8 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
         ))}
       </div>
 
-      {/* Log bar */}
-      <div className="shrink-0 bg-gray-900 border-t border-gray-700 px-4 py-2 min-h-[52px] flex items-center gap-3">
+      {/* Log bar — safe-area-bottom for iPhone home bar */}
+      <div className="shrink-0 bg-gray-900 border-t border-gray-700 px-4 py-2 min-h-[52px] flex items-center gap-3 safe-bottom safe-left safe-right">
         {lastCue ? (
           <>
             <span className="text-gray-500 font-mono text-xs shrink-0">

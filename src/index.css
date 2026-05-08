@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Force dark color-scheme on every element so scrollbars, inputs,
+   and system UI always render dark regardless of OS preference. */
+:root {
+  color-scheme: dark;
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -11,7 +17,7 @@ html, body {
   padding: 0;
   height: 100%;
   overscroll-behavior: none;
-  background: #030712; /* gray-950 */
+  background: #030712; /* gray-950 — matches theme-color in the manifest */
 }
 
 #root {
@@ -23,6 +29,12 @@ html, body {
   border: none;
   display: block;
 }
+
+/* Safe-area insets for iPhone notch / Dynamic Island / home bar */
+.safe-top    { padding-top:    env(safe-area-inset-top);    }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left   { padding-left:   env(safe-area-inset-left);   }
+.safe-right  { padding-right:  env(safe-area-inset-right);  }
 
 @keyframes cue-flash {
   0%   { opacity: 1; }
