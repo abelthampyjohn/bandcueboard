@@ -51,7 +51,6 @@ function CategorySection({ category, catIdx, tileNames, activeKey, onTap }) {
 
 export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
   const [tileNames, setTileNames] = useState({})
-  const [lastCue, setLastCue] = useState(null)
   const [activeKey, setActiveKey] = useState(null)
   const [codeCopied, setCodeCopied] = useState(false)
 
@@ -61,7 +60,6 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
       const data = snap.val()
       if (!data) return
       if (data.tileNames) setTileNames(data.tileNames)
-      if (data.currentCue) setLastCue(data.currentCue)
     })
     return unsub
   }, [roomCode])
@@ -69,7 +67,6 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
   const handleTap = useCallback((label, color, key) => {
     const cue = { label, color, ts: Date.now() }
     set(ref(db, `rooms/${roomCode}/currentCue`), cue)
-    setLastCue(cue)
     setActiveKey(key)
   }, [roomCode])
 
@@ -78,8 +75,6 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
     setCodeCopied(true)
     setTimeout(() => setCodeCopied(false), 2000)
   }
-
-  const lc = lastCue ? COLOR_MAP[lastCue.color] : null
 
   return (
     <div
@@ -154,37 +149,8 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
         ))}
       </div>
 
-      {/* Log bar */}
-      <div
-        className="shrink-0 px-4 py-3 min-h-[56px] flex items-center gap-3 safe-bottom safe-left safe-right"
-        style={{
-          background: 'linear-gradient(180deg, #0d0f14 0%, #111318 100%)',
-          borderTop: '1px solid rgba(255,255,255,0.07)',
-        }}
-      >
-        {lastCue ? (
-          <>
-            {/* Colour accent bar */}
-            <span
-              className="w-1 h-8 rounded-full shrink-0"
-              style={{ background: lc ? `linear-gradient(to bottom, ${lc.flashFrom}, ${lc.flashTo})` : '#fff' }}
-            />
-            <div className="flex flex-col min-w-0">
-              <span
-                className="font-black uppercase leading-tight truncate"
-                style={{ color: lc?.log, fontSize: 'clamp(1rem, 3vw, 1.4rem)', letterSpacing: '0.04em' }}
-              >
-                {lastCue.label}
-              </span>
-              <span className="text-gray-600 font-mono text-xs">
-                {new Date(lastCue.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-              </span>
-            </div>
-          </>
-        ) : (
-          <span className="text-gray-700 text-sm italic">Tap a tile to fire a cue…</span>
-        )}
-      </div>
+      {/* Safe-area spacer for iPhone home bar */}
+      <div className="shrink-0 safe-bottom safe-left safe-right" />
     </div>
   )
 }
