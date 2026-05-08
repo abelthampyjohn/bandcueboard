@@ -3,21 +3,33 @@
 * {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  box-sizing: border-box;
 }
 
-body {
-  overscroll-behavior: none;
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overscroll-behavior: none;
+  background: #030712; /* gray-950 */
 }
 
 #root {
   width: 100%;
-  max-width: 100%;
+  min-height: 100svh;
   margin: 0;
+  padding: 0;
   text-align: left;
   border: none;
-  min-height: unset;
   display: block;
-  box-sizing: border-box;
+}
+
+@keyframes cue-flash {
+  0%   { opacity: 1; }
+  40%  { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.cue-flash {
+  animation: cue-flash 0.5s ease-out;
 }
