@@ -17,6 +17,34 @@ export default function BandmateView({ roomCode, onLeave }) {
   const [online, setOnline] = useState(navigator.onLine)
   const lastTs = useRef(null)
   const flashTimer = useRef(null)
+  const wakeLock = useRef(null)
+
+  // Screen wake lock — keep display on while bandmate view is active
+  useEffect(() => {
+    async function acquireWakeLock() {
+      if (!('wakeLock' in navigator)) return
+      try {
+        wakeLock.current = await navigator.wakeLock.request('screen')
+      } catch {
+        // Silently ignore — device may deny (low battery, etc.)
+      }
+    }
+
+    // Wake locks are released automatically when the page goes to background;
+    // re-acquire when it comes back to the foreground.
+    function handleVisibility() {
+      if (document.visibilityState === 'visible') acquireWakeLock()
+    }
+
+    acquireWakeLock()
+    document.addEventListener('visibilitychange', handleVisibility)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility)
+      wakeLock.current?.release()
+      wakeLock.current = null
+    }
+  }, [])
 
   useEffect(() => {
     const up   = () => setOnline(true)
