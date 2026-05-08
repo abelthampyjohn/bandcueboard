@@ -4,7 +4,7 @@ import { db } from '../firebase'
 import { CATEGORIES, COLOR_MAP, tileKey } from '../constants'
 import CueTile from '../components/CueTile'
 
-function CategorySection({ category, catIdx, tileNames, onTap }) {
+function CategorySection({ category, catIdx, tileNames, activeKey, onTap }) {
   const c = COLOR_MAP[category.color]
   return (
     <div className="mb-4">
@@ -39,7 +39,8 @@ function CategorySection({ category, catIdx, tileNames, onTap }) {
               key={key}
               label={label}
               color={category.color}
-              onTap={onTap}
+              isActive={activeKey === key}
+              onTap={(label, color) => onTap(label, color, key)}
             />
           )
         })}
@@ -51,6 +52,7 @@ function CategorySection({ category, catIdx, tileNames, onTap }) {
 export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
   const [tileNames, setTileNames] = useState({})
   const [lastCue, setLastCue] = useState(null)
+  const [activeKey, setActiveKey] = useState(null)
   const [codeCopied, setCodeCopied] = useState(false)
 
   useEffect(() => {
@@ -64,10 +66,11 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
     return unsub
   }, [roomCode])
 
-  const handleTap = useCallback((label, color) => {
+  const handleTap = useCallback((label, color, key) => {
     const cue = { label, color, ts: Date.now() }
     set(ref(db, `rooms/${roomCode}/currentCue`), cue)
     setLastCue(cue)
+    setActiveKey(key)
   }, [roomCode])
 
   function copyCode() {
@@ -145,6 +148,7 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
             category={cat}
             catIdx={catIdx}
             tileNames={tileNames}
+            activeKey={activeKey}
             onTap={handleTap}
           />
         ))}
