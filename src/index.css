@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* Force dark color-scheme on every element so scrollbars, inputs,
-   and system UI always render dark regardless of OS preference. */
 :root {
   color-scheme: dark;
 }
@@ -17,7 +15,10 @@ html, body {
   padding: 0;
   height: 100%;
   overscroll-behavior: none;
-  background: #030712; /* gray-950 — matches theme-color in the manifest */
+  background: #090b0f;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -30,18 +31,14 @@ html, body {
   display: block;
 }
 
-/* Safe-area insets for iPhone notch / Dynamic Island / home bar */
-.safe-top    { padding-top:    env(safe-area-inset-top);    }
-.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-.safe-left   { padding-left:   env(safe-area-inset-left);   }
-.safe-right  { padding-right:  env(safe-area-inset-right);  }
+/* Safe-area insets */
+.safe-top    { padding-top:    max(env(safe-area-inset-top), 0px);    }
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+.safe-left   { padding-left:   max(env(safe-area-inset-left), 0px);   }
+.safe-right  { padding-right:  max(env(safe-area-inset-right), 0px);  }
 
-@keyframes cue-flash {
-  0%   { opacity: 1; }
-  40%  { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-.cue-flash {
-  animation: cue-flash 0.5s ease-out;
-}
+/* Smooth scrollbar for dark theme */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }

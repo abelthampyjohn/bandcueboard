@@ -5,7 +5,7 @@ import { CATEGORIES, COLOR_MAP, tileKey } from '../constants'
 
 export default function Settings({ roomCode, onClose }) {
   const [tileNames, setTileNames] = useState({})
-  const [editing, setEditing] = useState(null) // { key, value }
+  const [editing, setEditing] = useState(null)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -43,44 +43,76 @@ export default function Settings({ roomCode, onClose }) {
   }
 
   return (
-    <div className="bg-gray-950 min-h-screen flex flex-col" style={{ userSelect: 'none' }}>
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ background: '#090b0f', userSelect: 'none' }}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-700 shrink-0">
-        <span className="text-white font-black text-lg uppercase tracking-tight">
-          Settings — Rename Tiles
-        </span>
+      <div
+        className="flex items-center justify-between px-4 py-3 shrink-0 safe-top safe-left safe-right"
+        style={{
+          background: 'linear-gradient(180deg, #111318 0%, #0d0f14 100%)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}
+      >
+        <div>
+          <span className="text-white font-black text-base tracking-tight">Rename Tiles</span>
+          <span className="text-gray-600 text-xs ml-2">Tap any tile to edit</span>
+        </div>
         <button
           onPointerDown={onClose}
-          className="text-gray-400 hover:text-white font-black text-xl px-2 transition-colors"
+          className="text-gray-500 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-lg text-lg"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
         >
           ✕
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3 py-3">
+      <div className="flex-1 overflow-y-auto px-4 py-4 safe-left safe-right">
         {CATEGORIES.map((cat, catIdx) => {
           const c = COLOR_MAP[cat.color]
           return (
-            <div key={cat.name} className="mb-5">
-              <div className={`px-3 py-1.5 rounded-t-lg text-xs font-bold uppercase tracking-widest ${c.header} mb-1`}>
-                {cat.name}
+            <div key={cat.name} className="mb-6">
+              {/* Category label */}
+              <div className="flex items-center gap-2 mb-2">
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: c.dot }}
+                />
+                <span
+                  className="text-xs font-bold uppercase tracking-[0.2em]"
+                  style={{ color: c.label }}
+                >
+                  {cat.name}
+                </span>
               </div>
-              <div className="flex flex-col gap-1">
+
+              <div
+                className="rounded-2xl overflow-hidden"
+                style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}
+              >
                 {cat.tiles.map((defaultLabel, tileIdx) => {
                   const key = tileKey(catIdx, tileIdx)
                   const customLabel = tileNames[key]
                   const isEditing = editing?.key === key
+                  const isLast = tileIdx === cat.tiles.length - 1
 
                   return (
                     <div
                       key={key}
-                      className="flex items-center gap-2 bg-gray-900 rounded-lg px-3 py-2 border border-gray-800"
+                      className="flex items-center gap-3 px-4 py-3"
+                      style={{
+                        borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)',
+                      }}
                     >
                       {/* Default label */}
-                      <span className="text-gray-500 text-sm w-28 shrink-0">{defaultLabel}</span>
-                      <span className="text-gray-700 text-sm shrink-0">→</span>
+                      <span className="text-gray-600 text-sm w-28 shrink-0 font-medium">
+                        {defaultLabel}
+                      </span>
 
-                      {/* Editable name */}
+                      <span className="text-gray-800 text-xs shrink-0">→</span>
+
+                      {/* Editable / display */}
                       {isEditing ? (
                         <input
                           autoFocus
@@ -90,48 +122,57 @@ export default function Settings({ roomCode, onClose }) {
                             if (e.key === 'Enter') saveEdit()
                             if (e.key === 'Escape') setEditing(null)
                           }}
-                          className="flex-1 bg-gray-800 border border-indigo-500 text-white font-bold text-sm rounded-lg px-2 py-1 outline-none uppercase tracking-wide"
+                          className="flex-1 text-white font-bold text-sm rounded-lg px-3 py-1.5 outline-none uppercase tracking-wide"
+                          style={{
+                            background: 'rgba(255,255,255,0.06)',
+                            border: `1px solid ${c.tileBorder}`,
+                            boxShadow: `0 0 0 3px ${c.glow}`,
+                          }}
                           maxLength={20}
                         />
                       ) : (
                         <button
                           onPointerDown={() => startEdit(key, customLabel ?? defaultLabel)}
-                          className={`flex-1 text-left font-bold text-sm uppercase tracking-wide px-2 py-1 rounded-lg border transition-colors ${
-                            customLabel
-                              ? 'text-white border-gray-600 bg-gray-800 hover:border-indigo-500'
-                              : 'text-gray-500 border-transparent hover:border-gray-700 hover:text-gray-300'
-                          }`}
+                          className="flex-1 text-left text-sm font-bold uppercase tracking-wide px-3 py-1.5 rounded-lg transition-all"
+                          style={{
+                            color: customLabel ? c.tileText : 'rgba(255,255,255,0.3)',
+                            background: customLabel ? `${c.tileFrom}` : 'transparent',
+                            border: `1px solid ${customLabel ? c.tileBorder + '60' : 'transparent'}`,
+                          }}
                         >
                           {customLabel ?? defaultLabel}
                         </button>
                       )}
 
-                      {/* Action buttons */}
+                      {/* Actions */}
                       {isEditing ? (
-                        <div className="flex gap-1 shrink-0">
+                        <div className="flex gap-1.5 shrink-0">
                           <button
                             disabled={saving}
                             onPointerDown={saveEdit}
-                            className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-bold rounded px-2 py-1 transition-colors"
+                            className="text-xs font-bold rounded-lg px-3 py-1.5 transition-opacity disabled:opacity-50 text-white"
+                            style={{ background: `linear-gradient(135deg, ${c.tileFrom}, ${c.tileTo})`, border: `1px solid ${c.tileBorder}` }}
                           >
                             Save
                           </button>
                           <button
                             onPointerDown={() => setEditing(null)}
-                            className="text-gray-500 hover:text-gray-300 text-xs font-bold px-2 py-1 transition-colors"
+                            className="text-xs font-bold text-gray-600 hover:text-gray-300 px-2 py-1.5 transition-colors"
                           >
-                            Cancel
+                            ✕
                           </button>
                         </div>
                       ) : (
-                        customLabel && (
+                        customLabel ? (
                           <button
                             onPointerDown={() => resetTile(key)}
-                            className="text-gray-700 hover:text-rose-400 text-xs shrink-0 transition-colors"
+                            className="text-gray-700 hover:text-rose-400 text-sm shrink-0 transition-colors pl-1"
                             title="Reset to default"
                           >
                             ↺
                           </button>
+                        ) : (
+                          <span className="w-5 shrink-0" />
                         )
                       )}
                     </div>
@@ -142,12 +183,15 @@ export default function Settings({ roomCode, onClose }) {
           )
         })}
 
-        <div className="mt-2 mb-8 flex justify-center">
+        <div className="flex justify-center pb-10">
           <button
             onPointerDown={resetAll}
-            className="text-gray-600 hover:text-rose-400 text-sm font-bold uppercase tracking-wider transition-colors"
+            className="text-sm font-bold uppercase tracking-wider transition-colors"
+            style={{ color: 'rgba(255,255,255,0.15)' }}
+            onMouseEnter={e => e.currentTarget.style.color = '#fda4af'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.15)'}
           >
-            Reset all tile names to defaults
+            Reset all to defaults
           </button>
         </div>
       </div>

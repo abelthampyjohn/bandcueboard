@@ -5,10 +5,10 @@ import { COLOR_MAP } from '../constants'
 
 const CATEGORY_NAMES = {
   indigo: 'Song Structure',
-  amber: 'Dynamics',
-  cyan: 'Tempo',
+  amber:  'Dynamics',
+  cyan:   'Tempo',
   violet: 'Key Changes',
-  rose: 'Commands',
+  rose:   'Commands',
 }
 
 export default function BandmateView({ roomCode, onLeave }) {
@@ -18,7 +18,6 @@ export default function BandmateView({ roomCode, onLeave }) {
   const lastTs = useRef(null)
   const flashTimer = useRef(null)
 
-  // Track online/offline for user feedback
   useEffect(() => {
     const up   = () => setOnline(true)
     const down = () => setOnline(false)
@@ -30,8 +29,6 @@ export default function BandmateView({ roomCode, onLeave }) {
     }
   }, [])
 
-  // Firebase listener — Firebase RTDB auto-reconnects; last-known cue
-  // persists in component state while offline so the display isn't blank.
   useEffect(() => {
     const cueRef = ref(db, `rooms/${roomCode}/currentCue`)
     const unsub = onValue(cueRef, (snap) => {
@@ -42,7 +39,7 @@ export default function BandmateView({ roomCode, onLeave }) {
 
       clearTimeout(flashTimer.current)
       setFlashing(true)
-      flashTimer.current = setTimeout(() => setFlashing(false), 600)
+      flashTimer.current = setTimeout(() => setFlashing(false), 700)
     })
     return () => {
       unsub()
@@ -52,66 +49,113 @@ export default function BandmateView({ roomCode, onLeave }) {
 
   const c = cue ? COLOR_MAP[cue.color] : null
 
+  const bgStyle = flashing && c
+    ? {
+        background: `radial-gradient(ellipse 120% 100% at 50% 50%, ${c.flashFrom} 0%, ${c.flashTo}88 50%, ${c.bandFrom} 100%)`,
+      }
+    : cue && c
+    ? {
+        background: `radial-gradient(ellipse 80% 60% at 50% 40%, ${c.bandTo} 0%, ${c.bandFrom} 60%, #090b0f 100%)`,
+      }
+    : {
+        background: '#090b0f',
+      }
+
   return (
     <div
-      className={`min-h-screen flex flex-col items-center justify-center relative transition-colors duration-150 ${
-        flashing && c ? c.bg : 'bg-gray-950'
-      }`}
-      style={{ userSelect: 'none' }}
+      className="min-h-screen flex flex-col items-center justify-center relative"
+      style={{ ...bgStyle, userSelect: 'none', transition: 'background 0.15s ease' }}
     >
       {/* Offline banner */}
       {!online && (
-        <div className="absolute top-0 left-0 right-0 bg-amber-900 text-amber-200 text-xs font-bold text-center py-1.5 tracking-widest uppercase z-10 safe-top">
+        <div
+          className="absolute top-0 left-0 right-0 text-xs font-bold text-center py-2 tracking-widest uppercase z-10 safe-top"
+          style={{ background: 'rgba(120,53,15,0.9)', color: '#fcd34d', backdropFilter: 'blur(8px)' }}
+        >
           Offline — showing last cue
         </div>
       )}
 
-      {/* Room code + leave */}
-      <div className={`absolute left-0 right-0 flex items-center justify-between px-4 safe-left safe-right ${online ? 'top-0 pt-3 safe-top' : 'top-8'}`}>
-        <span className="text-gray-700 font-mono text-xs tracking-widest">#{roomCode}</span>
+      {/* Room code + leave — top corners */}
+      <div
+        className={`absolute left-0 right-0 flex items-center justify-between px-5 safe-left safe-right z-10 ${
+          online ? 'top-0 pt-4 safe-top' : 'top-9'
+        }`}
+      >
+        <span
+          className="font-mono text-xs tracking-widest"
+          style={{ color: flashing && c ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.2)' }}
+        >
+          #{roomCode}
+        </span>
         <button
           onPointerDown={onLeave}
-          className="text-gray-700 hover:text-gray-400 text-xs font-bold uppercase tracking-wider transition-colors"
+          className="text-xs font-bold uppercase tracking-wider transition-colors"
+          style={{ color: flashing && c ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.2)' }}
         >
           Leave
         </button>
       </div>
 
-      {/* Main cue display */}
+      {/* Main display */}
       {cue ? (
-        <div className="flex flex-col items-center gap-4 px-6 text-center">
+        <div className="flex flex-col items-center gap-3 px-8 text-center">
+          {/* Category pill */}
           <span
-            className={`font-black uppercase leading-none transition-colors duration-150 ${
-              flashing ? 'text-gray-950' : c?.log ?? 'text-white'
-            }`}
-            style={{ fontSize: 'clamp(3rem, 15vw, 9rem)', letterSpacing: '0.06em' }}
+            className="text-xs font-bold uppercase tracking-[0.3em] px-3 py-1 rounded-full"
+            style={{
+              background: flashing && c ? 'rgba(0,0,0,0.2)' : `${c?.tileBorder}30`,
+              color: flashing && c ? cue ? c.flashText : '#fff' : c?.label,
+              border: `1px solid ${flashing && c ? 'rgba(0,0,0,0.15)' : `${c?.tileBorder}50`}`,
+              transition: 'all 0.15s ease',
+            }}
+          >
+            {CATEGORY_NAMES[cue.color]}
+          </span>
+
+          {/* Cue label — the hero */}
+          <span
+            className="font-black uppercase leading-none"
+            style={{
+              fontSize: 'clamp(3.5rem, 16vw, 10rem)',
+              letterSpacing: '-0.02em',
+              color: flashing && c ? c.flashText : '#ffffff',
+              textShadow: flashing && c
+                ? 'none'
+                : c ? `0 0 60px ${c.glow}` : 'none',
+              transition: 'color 0.12s ease, text-shadow 0.12s ease',
+            }}
           >
             {cue.label}
-          </span>
-          <span
-            className={`uppercase tracking-[0.3em] text-sm font-bold transition-colors duration-150 ${
-              flashing ? 'text-gray-800' : 'text-gray-600'
-            }`}
-          >
-            {CATEGORY_NAMES[cue.color] ?? ''}
           </span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3">
-          <span className="text-gray-700 font-black text-4xl uppercase tracking-widest">
+          <div
+            className="w-3 h-3 rounded-full animate-pulse"
+            style={{ background: 'rgba(255,255,255,0.15)' }}
+          />
+          <span
+            className="font-black uppercase tracking-widest"
+            style={{ color: 'rgba(255,255,255,0.15)', fontSize: 'clamp(1.5rem, 5vw, 3rem)' }}
+          >
             Waiting…
           </span>
-          <span className="text-gray-800 text-sm tracking-wider">
+          <span className="text-xs tracking-wider" style={{ color: 'rgba(255,255,255,0.1)' }}>
             Listening for cues from the leader
           </span>
         </div>
       )}
 
-      {/* Full-perimeter flash ring */}
-      {flashing && (
+      {/* Flash border ring */}
+      {flashing && c && (
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ boxShadow: `inset 0 0 0 10px ${c?.flashBg ?? '#fff'}` }}
+          style={{
+            boxShadow: `inset 0 0 0 6px ${c.flashBg}`,
+            borderRadius: 0,
+            transition: 'opacity 0.1s',
+          }}
         />
       )}
     </div>

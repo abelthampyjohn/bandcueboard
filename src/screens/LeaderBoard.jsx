@@ -7,13 +7,29 @@ import CueTile from '../components/CueTile'
 function CategorySection({ category, catIdx, tileNames, onTap }) {
   const c = COLOR_MAP[category.color]
   return (
-    <div className="mb-3">
-      <div className={`px-3 py-1 rounded-t-lg text-xs font-bold uppercase tracking-widest ${c.header} mb-1`}>
-        {category.name}
+    <div className="mb-4">
+      {/* Category label */}
+      <div className="flex items-center gap-2 mb-2 px-1">
+        <span
+          className="w-2 h-2 rounded-full shrink-0"
+          style={{ background: c.dot, boxShadow: `0 0 6px ${c.glow}` }}
+        />
+        <span
+          className="text-xs font-bold uppercase tracking-[0.2em]"
+          style={{ color: c.label }}
+        >
+          {category.name}
+        </span>
+        <span
+          className="flex-1 h-px"
+          style={{ background: `linear-gradient(to right, ${c.tileBorder}40, transparent)` }}
+        />
       </div>
+
+      {/* Tile grid */}
       <div
         className="grid gap-2"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))' }}
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))' }}
       >
         {category.tiles.map((defaultLabel, tileIdx) => {
           const key = tileKey(catIdx, tileIdx)
@@ -37,7 +53,6 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
   const [lastCue, setLastCue] = useState(null)
   const [codeCopied, setCodeCopied] = useState(false)
 
-  // Sync tile names and last cue from Firebase
   useEffect(() => {
     const roomRef = ref(db, `rooms/${roomCode}`)
     const unsub = onValue(roomRef, (snap) => {
@@ -61,33 +76,51 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
     setTimeout(() => setCodeCopied(false), 2000)
   }
 
+  const lc = lastCue ? COLOR_MAP[lastCue.color] : null
+
   return (
-    <div className="bg-gray-950 min-h-screen flex flex-col" style={{ userSelect: 'none' }}>
-      {/* Header — safe-area-left/right for notch, safe-area-top for status bar in standalone */}
-      <div className="flex items-center justify-between px-3 py-2 bg-gray-900 border-b border-gray-700 shrink-0 gap-2 safe-top safe-left safe-right">
-        <span className="text-white font-black text-base sm:text-xl tracking-tight uppercase shrink-0">
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ background: '#090b0f', userSelect: 'none' }}
+    >
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-4 py-2.5 shrink-0 gap-3 safe-top safe-left safe-right"
+        style={{
+          background: 'linear-gradient(180deg, #111318 0%, #0d0f14 100%)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}
+      >
+        <span
+          className="text-white font-black shrink-0"
+          style={{ fontSize: 'clamp(0.85rem, 2.5vw, 1.1rem)', letterSpacing: '-0.01em' }}
+        >
           Band Cue Board
         </span>
 
         <div className="flex items-center gap-2">
-          {/* Room code badge */}
+          {/* Room code */}
           <button
             onPointerDown={copyCode}
-            className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 transition-colors"
-            title="Tap to copy room code"
+            className="flex items-center gap-2 rounded-xl px-3 py-1.5 transition-opacity active:opacity-70"
+            style={{
+              background: 'rgba(99,102,241,0.15)',
+              border: '1px solid rgba(99,102,241,0.3)',
+            }}
+            title="Tap to copy"
           >
-            <span className="text-gray-400 text-xs uppercase tracking-wider hidden sm:inline">Room</span>
-            <span className="text-white font-black text-lg tracking-widest font-mono">{roomCode}</span>
-            {codeCopied
-              ? <span className="text-green-400 text-xs">✓</span>
-              : <span className="text-gray-500 text-xs">⎘</span>
-            }
+            <span className="text-indigo-400 text-xs font-semibold uppercase tracking-widest hidden sm:inline">Room</span>
+            <span className="text-white font-black text-lg tracking-[0.2em] font-mono">{roomCode}</span>
+            <span className="text-xs" style={{ color: codeCopied ? '#4ade80' : '#6366f1' }}>
+              {codeCopied ? '✓' : '⎘'}
+            </span>
           </button>
 
           {/* Settings */}
           <button
             onPointerDown={onOpenSettings}
-            className="bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-300 rounded-lg px-3 py-1.5 text-sm font-bold transition-colors"
+            className="rounded-xl px-3 py-1.5 text-gray-400 hover:text-white transition-colors text-base"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
             title="Settings"
           >
             ⚙
@@ -96,15 +129,16 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
           {/* Leave */}
           <button
             onPointerDown={onLeave}
-            className="bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-400 hover:text-rose-400 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors"
+            className="rounded-xl px-3 py-1.5 text-xs font-bold text-gray-500 hover:text-rose-400 transition-colors"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
           >
             Leave
           </button>
         </div>
       </div>
 
-      {/* Tile grid */}
-      <div className="flex-1 overflow-y-auto px-2 pt-2 pb-1">
+      {/* Scrollable tile grid */}
+      <div className="flex-1 overflow-y-auto px-3 pt-3 pb-1">
         {CATEGORIES.map((cat, catIdx) => (
           <CategorySection
             key={cat.name}
@@ -116,19 +150,35 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
         ))}
       </div>
 
-      {/* Log bar — safe-area-bottom for iPhone home bar */}
-      <div className="shrink-0 bg-gray-900 border-t border-gray-700 px-4 py-2 min-h-[52px] flex items-center gap-3 safe-bottom safe-left safe-right">
+      {/* Log bar */}
+      <div
+        className="shrink-0 px-4 py-3 min-h-[56px] flex items-center gap-3 safe-bottom safe-left safe-right"
+        style={{
+          background: 'linear-gradient(180deg, #0d0f14 0%, #111318 100%)',
+          borderTop: '1px solid rgba(255,255,255,0.07)',
+        }}
+      >
         {lastCue ? (
           <>
-            <span className="text-gray-500 font-mono text-xs shrink-0">
-              {new Date(lastCue.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </span>
-            <span className={`font-black text-xl sm:text-2xl uppercase tracking-wider ${COLOR_MAP[lastCue.color]?.log}`}>
-              ▶ {lastCue.label}
-            </span>
+            {/* Colour accent bar */}
+            <span
+              className="w-1 h-8 rounded-full shrink-0"
+              style={{ background: lc ? `linear-gradient(to bottom, ${lc.flashFrom}, ${lc.flashTo})` : '#fff' }}
+            />
+            <div className="flex flex-col min-w-0">
+              <span
+                className="font-black uppercase leading-tight truncate"
+                style={{ color: lc?.log, fontSize: 'clamp(1rem, 3vw, 1.4rem)', letterSpacing: '0.04em' }}
+              >
+                {lastCue.label}
+              </span>
+              <span className="text-gray-600 font-mono text-xs">
+                {new Date(lastCue.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </span>
+            </div>
           </>
         ) : (
-          <span className="text-gray-600 text-sm italic">Tap a tile to send a cue…</span>
+          <span className="text-gray-700 text-sm italic">Tap a tile to fire a cue…</span>
         )}
       </div>
     </div>

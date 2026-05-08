@@ -2,15 +2,30 @@ import { useState, useCallback } from 'react'
 import { COLOR_MAP } from '../constants'
 
 export default function CueTile({ label, color, onTap, disabled = false }) {
-  const [flashing, setFlashing] = useState(false)
+  const [pressed, setPressed] = useState(false)
   const c = COLOR_MAP[color]
 
   const handleTap = useCallback(() => {
     if (disabled) return
-    setFlashing(true)
+    setPressed(true)
     onTap(label, color)
-    setTimeout(() => setFlashing(false), 400)
+    setTimeout(() => setPressed(false), 380)
   }, [label, color, onTap, disabled])
+
+  const baseStyle = {
+    background: pressed
+      ? `linear-gradient(135deg, ${c.flashFrom} 0%, ${c.flashTo} 100%)`
+      : `linear-gradient(160deg, ${c.tileFrom} 0%, ${c.tileTo} 100%)`,
+    borderColor: pressed ? c.flashFrom : c.tileBorder,
+    color: pressed ? c.flashText : c.tileText,
+    boxShadow: pressed
+      ? `0 0 24px ${c.glow}, inset 0 1px 0 rgba(255,255,255,0.15)`
+      : `0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)`,
+    transform: pressed ? 'scale(0.94)' : 'scale(1)',
+    transition: pressed
+      ? 'transform 0.06s ease, box-shadow 0.06s ease, background 0.06s ease, border-color 0.06s ease, color 0.06s ease'
+      : 'transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease',
+  }
 
   return (
     <button
@@ -18,16 +33,13 @@ export default function CueTile({ label, color, onTap, disabled = false }) {
       disabled={disabled}
       className={`
         flex items-center justify-center text-center
-        rounded-xl border-2 select-none cursor-pointer
-        font-bold tracking-wide uppercase
-        transition-colors duration-75 active:scale-95
-        text-xl sm:text-2xl lg:text-3xl
-        min-h-[72px] sm:min-h-[88px]
-        px-2 py-3 leading-tight
-        ${flashing ? c.flash : c.tile}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        rounded-2xl border select-none
+        font-black uppercase leading-tight
+        min-h-[76px] sm:min-h-[92px]
+        px-3 py-3
+        ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
       `}
-      style={{ letterSpacing: '0.04em' }}
+      style={{ ...baseStyle, letterSpacing: '0.05em', fontSize: 'clamp(0.85rem, 2.2vw, 1.2rem)' }}
     >
       {label}
     </button>
