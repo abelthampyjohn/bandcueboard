@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body {
+  overscroll-behavior: none;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: left;
+  border: none;
+  min-height: unset;
+  display: block;
+  box-sizing: border-box;
+}
