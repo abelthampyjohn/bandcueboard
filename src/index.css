@@ -2,6 +2,8 @@
 
 :root {
   color-scheme: dark;
+  --font-display: 'Bebas Neue', system-ui, sans-serif;
+  --font-ui:      'Barlow Condensed', system-ui, sans-serif;
 }
 
 * {
@@ -16,7 +18,7 @@ html, body {
   height: 100%;
   overscroll-behavior: none;
   background: #090b0f;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

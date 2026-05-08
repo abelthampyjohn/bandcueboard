@@ -51,8 +51,9 @@ export default function CueTile({ label, color, onTap, isActive = false, disable
         transition: pressed
           ? 'transform 0.06s ease, box-shadow 0.06s ease, background 0.06s ease, border-color 0.06s ease, color 0.06s ease'
           : 'transform 0.18s ease, box-shadow 0.3s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease',
-        letterSpacing: '0.05em',
-        fontSize: 'clamp(0.85rem, 2.2vw, 1.2rem)',
+        fontFamily: 'var(--font-display)',
+        letterSpacing: '0.08em',
+        fontSize: 'clamp(1.05rem, 2.6vw, 1.5rem)',
       }}
     >
       {label}

@@ -115,14 +115,15 @@ export default function BandmateView({ roomCode, onLeave }) {
 
           {/* Cue label — the hero */}
           <span
-            className="font-black uppercase leading-none"
+            className="uppercase leading-none"
             style={{
-              fontSize: 'clamp(3.5rem, 16vw, 10rem)',
-              letterSpacing: '-0.02em',
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(4rem, 18vw, 12rem)',
+              letterSpacing: '0.06em',
               color: flashing && c ? c.flashText : '#ffffff',
               textShadow: flashing && c
                 ? 'none'
-                : c ? `0 0 60px ${c.glow}` : 'none',
+                : c ? `0 0 80px ${c.glow}` : 'none',
               transition: 'color 0.12s ease, text-shadow 0.12s ease',
             }}
           >
@@ -136,8 +137,13 @@ export default function BandmateView({ roomCode, onLeave }) {
             style={{ background: 'rgba(255,255,255,0.15)' }}
           />
           <span
-            className="font-black uppercase tracking-widest"
-            style={{ color: 'rgba(255,255,255,0.15)', fontSize: 'clamp(1.5rem, 5vw, 3rem)' }}
+            className="uppercase"
+            style={{
+              fontFamily: 'var(--font-display)',
+              letterSpacing: '0.15em',
+              color: 'rgba(255,255,255,0.15)',
+              fontSize: 'clamp(2rem, 6vw, 4rem)',
+            }}
           >
             Waiting…
           </span>

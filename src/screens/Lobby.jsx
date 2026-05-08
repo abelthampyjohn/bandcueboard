@@ -88,8 +88,12 @@ export default function Lobby({ onJoin }) {
         <LogoMark />
         <div className="text-center">
           <h1
-            className="text-white font-black tracking-tight"
-            style={{ fontSize: 'clamp(1.8rem, 6vw, 2.8rem)', letterSpacing: '-0.02em' }}
+            className="text-white uppercase"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(2.4rem, 8vw, 4rem)',
+              letterSpacing: '0.1em',
+            }}
           >
             Band Cue Board
           </h1>
@@ -110,7 +114,7 @@ export default function Lobby({ onJoin }) {
               boxShadow: '0 4px 24px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
             }}
           >
-            <span className="block text-white font-black text-xl tracking-wide">Create Room</span>
+            <span className="block text-white text-2xl tracking-widest uppercase" style={{ fontFamily: 'var(--font-display)' }}>Create Room</span>
             <span className="block text-indigo-300 text-sm font-medium mt-0.5">I'm the band leader</span>
           </button>
 
@@ -123,7 +127,7 @@ export default function Lobby({ onJoin }) {
               border: '1px solid #374151',
             }}
           >
-            <span className="block text-white font-black text-xl tracking-wide">Join Room</span>
+            <span className="block text-white text-2xl tracking-widest uppercase" style={{ fontFamily: 'var(--font-display)' }}>Join Room</span>
             <span className="block text-gray-400 text-sm font-medium mt-0.5">I'm a bandmate</span>
           </button>
         </div>
@@ -144,7 +148,8 @@ export default function Lobby({ onJoin }) {
           <button
             disabled={busy}
             onPointerDown={handleCreate}
-            className="w-full rounded-2xl py-5 font-black text-white text-xl tracking-wide transition-transform active:scale-[0.97] disabled:opacity-50"
+            className="w-full rounded-2xl py-5 text-white text-2xl tracking-widest uppercase transition-transform active:scale-[0.97] disabled:opacity-50"
+            style={{ fontFamily: 'var(--font-display)' }}
             style={{
               background: busy ? '#312e81' : 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)',
               boxShadow: '0 4px 24px rgba(99,102,241,0.35)',
@@ -190,7 +195,8 @@ export default function Lobby({ onJoin }) {
           <button
             disabled={busy || joinCode.length !== 4}
             onPointerDown={handleJoin}
-            className="w-full rounded-2xl py-5 font-black text-white text-xl tracking-wide transition-transform active:scale-[0.97] disabled:opacity-40"
+            className="w-full rounded-2xl py-5 text-white text-2xl tracking-widest uppercase transition-transform active:scale-[0.97] disabled:opacity-40"
+            style={{ fontFamily: 'var(--font-display)' }}
             style={{
               background: 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)',
               boxShadow: joinCode.length === 4 ? '0 4px 24px rgba(99,102,241,0.35)' : 'none',

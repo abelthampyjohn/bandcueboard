@@ -90,8 +90,8 @@ export default function LeaderBoard({ roomCode, onOpenSettings, onLeave }) {
         }}
       >
         <span
-          className="text-white font-black shrink-0"
-          style={{ fontSize: 'clamp(0.85rem, 2.5vw, 1.1rem)', letterSpacing: '-0.01em' }}
+          className="text-white uppercase shrink-0"
+          style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.1rem, 3vw, 1.5rem)', letterSpacing: '0.1em' }}
         >
           Band Cue Board
         </span>
